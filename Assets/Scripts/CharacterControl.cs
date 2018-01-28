@@ -60,9 +60,11 @@ public class CharacterControl : MonoBehaviour {
 
         Vector2 ViewAngle = new Vector2(CrossPlatformInputManager.GetAxis("View_X"), CrossPlatformInputManager.GetAxis("View_Y"));
 
-        m_GunController.Aim(m_Gun, ViewAngle);
-        m_Gun.transform.position = new Vector3(m_GunFollowPos.transform.position.x, m_GunFollowPos.transform.position.y);
+        
+        m_GunController.Aim(m_Gun, ViewAngle);   
+        
 
+        m_Gun.transform.position = new Vector3(m_GunFollowPos.transform.position.x, m_GunFollowPos.transform.position.y);
         m_CharacterMovement.MoveVertical(m_Body_2D, verticalMovement);
         m_CharacterMovement.MoveHorizontal(m_Body_2D, horizontalMovement, ViewAngle.x);
 
@@ -70,14 +72,17 @@ public class CharacterControl : MonoBehaviour {
 
         if(drainFeedAmount > 0.1f)
         {
-            var gunPos = new Vector3(m_Collier.bounds.extents.x + m_Collier.bounds.size.x, m_Collier.bounds.center.y, 0);
-            m_GunController.Push(drainFeedAmount, gunPos);
+            var gunPos = new Vector3(m_Gun.transform.localPosition.x + (m_Collier.bounds.extents.x - m_Gun.transform.localPosition.x), m_Collier.bounds.center.y, 0);
+            m_GunController.Push(drainFeedAmount, m_Gun.transform.position);
         }
-
-        if(drainFeedAmount < -0.1f)
+        else if(drainFeedAmount < -0.1f)
         {
-            var gunPos = new Vector3(m_Collier.bounds.extents.x + m_Collier.bounds.size.x, m_Collier.bounds.center.y, 0);
-            m_GunController.Pull(drainFeedAmount, gunPos);
+            var gunPos = new Vector3(m_Gun.transform.position.x + m_Collier.bounds.extents.x, m_Gun.transform.position.x + m_Collier.bounds.center.y, 0);
+            m_GunController.Pull(drainFeedAmount, m_Gun.transform.position);
+        }
+        else
+        {
+            m_GunController.ResetRender();
         }
     }
 }

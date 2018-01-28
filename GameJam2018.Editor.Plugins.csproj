@@ -135,19 +135,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="GameJam2018.Plugins.csproj">
-      <Project>{5777963E-2CF3-D3E6-DEB9-BDAD3A5C2C46}</Project>
-      <Name>GameJam2018.Plugins</Name>
-    </ProjectReference>
     <ProjectReference Include="GameJam2018.csproj">
       <Project>{32F7845E-E0CE-F7FC-B36B-D42276D8BF88}</Project>
       <Name>GameJam2018</Name>
+    </ProjectReference>
+    <ProjectReference Include="GameJam2018.Plugins.csproj">
+      <Project>{5777963E-2CF3-D3E6-DEB9-BDAD3A5C2C46}</Project>
+      <Name>GameJam2018.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Standard Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Anima2D\Examples\Shaders\Unlit-Alpha-Cull-off.shader" />
+    <None Include="Assets\Anima2D\Examples\Shaders\VertexLitOneDirectional.shader" />
+    <None Include="Assets\Anima2D\Examples\Shaders\VisibleInsideMask.shader" />
+    <None Include="Assets\Anima2D\Examples\Shaders\VisibleOutsideMask.shader" />
+    <None Include="Assets\Anima2D\Licenses.txt" />
+    <None Include="Assets\Anima2D\Readme.txt" />
+    <None Include="Assets\Anima2D\Version.txt" />
+    <None Include="Assets\Materials\Sprites-Outline.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

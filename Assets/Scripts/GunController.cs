@@ -5,10 +5,12 @@ using UnityEngine;
 public class GunController : MonoBehaviour {
 
     LayerMask m_Mask = new LayerMask();
-    GameObject m_Target { get; set; }
-    Vector3 m_HitPoint { get; set; }
+    public GameObject m_Target { get; set; }
+    public Vector3 m_HitPoint { get; set; }
     LineRenderer m_Renderer { get; set; }
     public int m_LengthOfLineRenderer = 20;
+
+    public float StoredMomentum = 0;
 
     public Color m_StartPullColor = Color.blue;
     public Color m_EndPullColor = Color.green;
@@ -39,8 +41,12 @@ public class GunController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-		
+    void Update ()
+    {
+        if (m_Target == null)
+        {
+            m_Renderer.enabled = false;
+        }
 	}
 
     public void Aim(GameObject gun, Vector2 viewAngle)
@@ -64,9 +70,20 @@ public class GunController : MonoBehaviour {
         if (m_Target == null)
             return;
 
+        var toy = m_Target.GetComponent<Toy>();
+
+        if (toy == null || toy.m_Momentum <= 0)
+        {
+            m_Renderer.enabled = false;
+            return;
+        }
+            
+        StoredMomentum += toy.UpdateMometum(drain * Time.deltaTime);
         SetRendererColor(m_StartPullColor, m_EndPullColor);
         var center = m_Target.GetComponent<BoxCollider2D>().bounds.center;
         Shoot(m_HitPoint, gun);
+
+        UpdateColor(Color.blue);
     }
 
     public void Push(float feed, Vector3 gun)
@@ -74,17 +91,27 @@ public class GunController : MonoBehaviour {
         if (m_Target == null)
             return;
 
+        var toy = m_Target.GetComponent<Toy>();
+
+        if (toy == null || toy.m_Momentum >= 2 || StoredMomentum <= 0)
+        {
+            m_Renderer.enabled = false;
+            return;
+        }
+
+        StoredMomentum += toy.UpdateMometum(feed * Time.deltaTime);
         SetRendererColor(m_StartPushColor, m_EndPushColor);
         var center = m_Target.GetComponent<BoxCollider2D>().bounds.center;
         Shoot(gun, m_HitPoint);
+
+        UpdateColor(Color.red);
     }
 
     public void Shoot(Vector3 to, Vector3 from)
     {
         var startPos = to;
         var endPos = from;
-
-        var direction = endPos - startPos;
+        var direction = (endPos - startPos);
 
         for(int i = 0; i < m_LengthOfLineRenderer; i++)
         {
@@ -114,12 +141,32 @@ public class GunController : MonoBehaviour {
         {
             var target = hit.collider.gameObject;
             m_Target = hit.collider.gameObject;
-            m_HitPoint = new Vector3(hit.point.y, hit.point.y, 0);
+            m_HitPoint = new Vector3(hit.point.x, hit.point.y, 0);
+
+            UpdateColor(Color.green);
         }
         else
         {
+            UpdateColor(Color.black);
             m_Target = null;
         }
+    }
+
+    private void UpdateColor(Color color)
+    {
+        if (m_Target != null)
+        {
+            var outline = m_Target.GetComponent<SpriteOutline>();
+            if (outline != null)
+            {
+                outline.color = color;
+            }
+        }
+    }
+
+    public void ResetRender()
+    {
+        m_Renderer.enabled = false;
     }
 
     public void AnimateColor(GameObject Gun)
